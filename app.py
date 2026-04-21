@@ -65,7 +65,9 @@ def run_protocol(protocol):
 @app.route('/comparison')
 def comparison():
     return render_template('comparison.html')
+# Flask application for simulating real-time scheduling protocols
 
+# Dictionary storing different scheduling protocols and their properties
 @app.route('/about')
 def about():
     return render_template('about.html')
