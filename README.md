@@ -26,3 +26,4 @@ This project demonstrates the impact of priority inversion in real-time systems 
 - **Diagnostics Dashboard**: View exact execution times and simulation analysis.
 - **Detailed Comparison**: See a tabulated summary of different protocols.
 - **Export Results**: Download simulation logs directly as TXT files for sharing.
+This project demonstrates real-time scheduling algorithms.
