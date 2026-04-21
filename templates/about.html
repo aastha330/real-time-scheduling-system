@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}About | Real-Time Scheduler{% endblock %}
+
+{% block content %}
+<h1 class="page-title">System Architecture Reference</h1>
+
+<div class="glass-panel about-content">
+    <h2>The Priority Inversion Problem</h2>
+    <p>In real-time operating systems, priority inversion is a critical failure state where a high-priority task is indirectly preempted by a medium-priority task because they both depend on a shared resource currently locked by a low-priority task.</p>
+    
+    <p>In the context of the Engine: If the Thruster Array (High Priority) needs power data (Low Priority) to recalculate trajectory, but Life Support (Medium Priority) preempts the power calculation, the Thrusters stall. This leads to catastrophic failure in time-critical environments like the Mars Pathfinder.</p>
+    
+    <h3>Implemented Countermeasures</h3>
+    
+    <ul>
+        <li>
+            <strong style="color: var(--error-red);">Standard Scheduling (No Protocol)</strong><br>
+            No active mitigation. Medium-priority tasks have free rein to preempt the resource-holding low-priority task, causing the high-priority task to wait indefinitely.
+        </li>
+        <br>
+        <li>
+            <strong style="color: var(--warning-orange);">Priority Inheritance Protocol (PIP)</strong><br>
+            When a high-priority task blocks on a resource, the task holding the resource temporarily "inherits" the high priority. This prevents medium-priority tasks from preempting it. Once the resource is released, the priority drops back to normal.
+        </li>
+        <br>
+        <li>
+            <strong style="color: var(--success-green);">Priority Ceiling Protocol (PCP)</strong><br>
+            Every resource is assigned a "priority ceiling," which is the highest priority of any task that may lock it. When a task locks a resource, the system dynamically ensures it won't be preempted inappropriately, completely preventing both deadlocks and chained blocking.
+        </li>
+    </ul>
+    
+    <div style="margin-top: 3rem; text-align: center;">
+        <a href="/" class="btn-glow btn-cyan">Initialize Engine Core</a>
+    </div>
+</div>
+{% endblock %}

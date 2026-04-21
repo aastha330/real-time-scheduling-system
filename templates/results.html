@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Results | Real-Time Scheduler{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Simulation Diagnostics</h1>
+
+<div class="status-indicator status-running" id="sim-status">
+    <div class="status-dot"></div>
+    <span>System Running: Scheduling Engine Active...</span>
+</div>
+
+<div class="loader-container" id="loader">
+    <div class="spinner"></div>
+    <p>Simulating real-time kernel scheduling...</p>
+</div>
+
+<div id="results-display" style="display: none; width: 100%; display: flex; flex-direction: column; align-items: center;">
+    
+    <div class="glass-panel" id="summary-panel" style="display: none; padding: 2rem; width: 100%; max-width: 800px; text-align: left; margin-bottom: 2rem;">
+        <h2 id="res-name" style="margin-bottom: 1rem; color: var(--primary-cyan);">Protocol</h2>
+        <p><strong>Execution Time:</strong> <span id="res-time" style="color: var(--warning-orange); font-family: 'Orbitron', sans-serif;">0.0s</span></p>
+        <p style="margin-top: 1rem;"><strong>Analysis:</strong> <span id="res-explanation" style="color: var(--text-muted);">...</span></p>
+        
+        {% if delay %}
+        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 4px solid var(--accent-purple);">
+            <p style="color: var(--accent-purple); font-family: 'Orbitron', sans-serif; margin-bottom: 0.5rem;">Input Parameters Configured:</p>
+            <p style="color: var(--text-light);">Delay = {{ delay }} sec, Low = {{ low }}, Medium = {{ medium }}, High = {{ high }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="terminal-box" id="terminal">
+        <!-- Log entries will be injected dynamically here -->
+    </div>
+
+    <div style="display: flex; gap: 1rem; margin-top: 2rem; display: none;" id="post-sim-actions">
+        <a href="/" class="btn-glow btn-cyan">Return Home</a>
+        <a id="download-btn" href="#" class="btn-glow btn-purple" style="border-color: var(--accent-purple); color: var(--accent-purple); box-shadow: var(--glow-purple);">Download Summary (TXT)</a>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    const protocol = "{{ protocol }}";
+    const loader = document.getElementById('loader');
+    const resultsDisplay = document.getElementById('results-display');
+    const summaryPanel = document.getElementById('summary-panel');
+    const actionsPanel = document.getElementById('post-sim-actions');
+    const terminal = document.getElementById('terminal');
+    const statusInd = document.getElementById('sim-status');
+    
+    // Initial State
+    resultsDisplay.style.display = 'flex';
+    loader.style.display = 'flex'; // We keep the loader running while streaming
+    terminal.innerHTML = '<p style="color: var(--text-muted);">Waiting for STDOUT stream...</p>';
+    
+    let timerStart = Date.now();
+    let isFirstLog = true;
+
+    // Connect to Server-Sent Events endpoint
+    const eventSource = new EventSource(`/run/${protocol}`);
+    
+    eventSource.onmessage = function(event) {
+        const payload = JSON.parse(event.data);
+        
+        if (payload.type === 'init') {
+            document.getElementById('res-name').innerText = payload.name;
+        } 
+        else if (payload.type === 'log') {
+            if (isFirstLog) {
+                terminal.innerHTML = '';
+                isFirstLog = false;
+            }
+            
+            const line = payload.data;
+            const p = document.createElement('p');
+            p.className = 'log-entry';
+            
+            if(line.includes('[ ! ]') || line.includes('INVERSION') || line.includes('Error')) {
+                p.classList.add('log-error');
+            } else if (line.includes('[ * ]') || line.includes('INHERITS')) {
+                p.classList.add('log-warning');
+            } else if (line.includes('successfully')) {
+                p.classList.add('log-success');
+            }
+            
+            // Calculate live drift time since start
+            const elapsed = ((Date.now() - timerStart) / 1000).toFixed(1);
+            p.innerText = `[${elapsed}s] ${line}`;
+            terminal.appendChild(p);
+            terminal.scrollTop = terminal.scrollHeight;
+        } 
+        else if (payload.type === 'complete') {
+            // End of stream!
+            eventSource.close();
+            
+            // Hide loader, show final summary panels
+            loader.style.display = 'none';
+            summaryPanel.style.display = 'block';
+            actionsPanel.style.display = 'flex';
+            
+            // Update Status based on protocol output
+            statusInd.className = 'status-indicator';
+            statusInd.classList.add(`status-${payload.status.toLowerCase()}`);
+            statusInd.innerHTML = `<div class="status-dot"></div><span>Simulation Completed [Status: ${payload.status.toUpperCase()}]</span>`;
+            
+            document.getElementById('res-name').innerText = payload.name || protocol;
+            document.getElementById('res-time').innerText = `${payload.time}s ⏱`;
+            document.getElementById('res-explanation').innerText = payload.explanation;
+            
+            // Update Download link
+            document.getElementById('download-btn').href = `/download?protocol=${payload.protocol_key}`;
+        }
+    };
+
+    eventSource.onerror = function() {
+        eventSource.close();
+        statusInd.className = 'status-indicator status-error';
+        statusInd.innerHTML = '<div class="status-dot"></div><span>System Error connecting to STDOUT pipeline</span>';
+        loader.style.display = 'none';
+    };
+
+{% endblock %}

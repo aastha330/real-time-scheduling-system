@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | Real-Time Scheduler{% endblock %}
+
+{% block content %}
+<h1 class="page-title">🚀 Real-Time Scheduling System</h1>
+
+<div class="status-indicator status-idle">
+    <div class="status-dot"></div>
+    <span>System Idle: Awaiting Protocol Execution</span>
+</div>
+
+<div class="glass-panel" style="padding: 1.5rem; text-align: center; margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 800px;">
+    <div style="display: flex; flex-direction: column; text-align: left;">
+        <label for="delay" style="font-size: 0.9rem; margin-bottom: 0.3rem; color: var(--primary-cyan);">Task Delay (sec)</label>
+        <input type="number" id="delay" placeholder="e.g. 3" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--primary-cyan); background: rgba(0,0,0,0.3); color: white; width: 140px;">
+    </div>
+    <div style="display: flex; flex-direction: column; text-align: left;">
+        <label for="low" style="font-size: 0.9rem; margin-bottom: 0.3rem; color: var(--primary-cyan);">Low Prio</label>
+        <input type="number" id="low" placeholder="e.g. 10" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--primary-cyan); background: rgba(0,0,0,0.3); color: white; width: 120px;">
+    </div>
+    <div style="display: flex; flex-direction: column; text-align: left;">
+        <label for="medium" style="font-size: 0.9rem; margin-bottom: 0.3rem; color: var(--primary-cyan);">Medium Prio</label>
+        <input type="number" id="medium" placeholder="e.g. 20" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--primary-cyan); background: rgba(0,0,0,0.3); color: white; width: 120px;">
+    </div>
+    <div style="display: flex; flex-direction: column; text-align: left;">
+        <label for="high" style="font-size: 0.9rem; margin-bottom: 0.3rem; color: var(--primary-cyan);">High Prio</label>
+        <input type="number" id="high" placeholder="e.g. 30" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--primary-cyan); background: rgba(0,0,0,0.3); color: white; width: 120px;">
+    </div>
+</div>
+
+<div class="card-grid">
+    <div class="protocol-card glass-panel">
+        <h2>No Protocol</h2>
+        <p>Run the simulation with standard priority scheduling. Warning: Subject to unbounded priority inversion where lower priority tasks delay higher priority tasks.</p>
+        <a href="#" onclick="runSim('no'); return false;" class="btn-glow btn-red">Execute Simulation</a>
+    </div>
+    
+    <div class="protocol-card glass-panel">
+        <h2>PIP</h2>
+        <p>Priority Inheritance Protocol. A resource-holding low-priority task dynamically inherits the execution priority of blocking high-priority tasks.</p>
+        <a href="#" onclick="runSim('pip'); return false;" class="btn-glow btn-orange">Execute PIP Mode</a>
+    </div>
+    
+    <div class="protocol-card glass-panel">
+        <h2>PCP</h2>
+        <p>Priority Ceiling Protocol. A robust mechanism that establishes priority ceilings for resources to completely eliminate deadlocks and bound priority inversions.</p>
+        <a href="#" onclick="runSim('pcp'); return false;" class="btn-glow btn-green">Execute PCP Mode</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+function runSim(protocol) {
+    const delay = document.getElementById('delay').value;
+    const low = document.getElementById('low').value;
+    const medium = document.getElementById('medium').value;
+    const high = document.getElementById('high').value;
+    
+    if (!delay || !low || !medium || !high) {
+        alert("Warning: Please fill in all input fields (Task Delay, Low Priority, Medium Priority, and High Priority) before executing.");
+        return;
+    }
+    
+    window.location.href = `/results?protocol=${protocol}&delay=${delay}&low=${low}&medium=${medium}&high=${high}`;
+}
+{% endblock %}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Real-Time Scheduler{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="brand">
+            <span>🚀 ASYS</span>
+        </a>
+        <div class="nav-links">
+            <a href="/" class="{{ 'active' if request.endpoint == 'index' else '' }}">Home</a>
+            <a href="/comparison" class="{{ 'active' if request.endpoint == 'comparison' else '' }}">Comparison</a>
+            <a href="/about" class="{{ 'active' if request.endpoint == 'about' else '' }}">About</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        {% block scripts %}{% endblock %}
+    </script>
+</body>
+</html>

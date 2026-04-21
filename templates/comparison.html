@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Comparison | Real-Time Scheduler{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Protocol Telemetrics</h1>
+
+<div class="glass-panel" style="padding: 1rem; width: 100%; max-width: 900px; text-align: center; margin-bottom: 2rem;">
+    <p>A comparative analysis of priority inversion handling across the scheduling algorithms within the control plane.</p>
+</div>
+
+<table class="comparison-table glass-panel">
+    <thead>
+        <tr>
+            <th>Protocol</th>
+            <th>Execution Time</th>
+            <th>Delay Impact</th>
+            <th>Mechanism Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="color: var(--error-red); font-weight: bold;">No Protocol</td>
+            <td style="color: var(--text-light); font-family: 'Orbitron', sans-serif;">High (~5.0s)</td>
+            <td style="color: var(--error-red);">Unbounded Delay</td>
+            <td style="color: var(--text-muted);">Standard preemption allows medium-priority tasks to infinitely block high-priority tasks waiting on resources held by low-priority tasks.</td>
+        </tr>
+        <tr>
+            <td style="color: var(--warning-orange); font-weight: bold;">Priority Inheritance (PIP)</td>
+            <td style="color: var(--text-light); font-family: 'Orbitron', sans-serif;">Medium (~3.0s)</td>
+            <td style="color: var(--warning-orange);">Bounded Delay</td>
+            <td style="color: var(--text-muted);">Resource-holding tasks temporarily inherit the priority of blocked tasks. Prevents medium-priority task preemption, reducing delay.</td>
+        </tr>
+        <tr>
+            <td style="color: var(--success-green); font-weight: bold;">Priority Ceiling (PCP)</td>
+            <td style="color: var(--text-light); font-family: 'Orbitron', sans-serif;">Low (~1.5s)</td>
+            <td style="color: var(--success-green);">No Delay (Optimal)</td>
+            <td style="color: var(--text-muted);">Each resource has a ceiling priority. Tasks dynamically execute at the ceiling priority when holding a resource, preventing deadlocks and transitive blocking entirely.</td>
+        </tr>
+    </tbody>
+</table>
+
+<div style="margin-top: 3rem; text-align: center;">
+    <a href="/" class="btn-glow btn-cyan">Return to Control Console</a>
+</div>
+{% endblock %}
