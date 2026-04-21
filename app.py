@@ -29,7 +29,7 @@ PROTOCOLS = {
         'script': 'scripts/sim_pcp.py'
     }
 }
-
+# This section defines scheduling protocols and their execution behavior
 @app.route('/')
 def index():
     return render_template('index.html')
