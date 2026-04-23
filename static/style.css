@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap');
-
+body {
+    font-family: Arial, sans-serif;
+}
 :root {
     --bg-color: #0f172a;
     --navy-light: #1e293b;
