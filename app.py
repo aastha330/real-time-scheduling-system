@@ -33,7 +33,7 @@ PROTOCOLS = {
 @app.route('/')
 def index():
     return render_template('index.html')
-
+# Handle incoming user requests and process scheduling logic
 @app.route('/run/<protocol>')
 def run_protocol(protocol):
     if protocol not in PROTOCOLS:
