@@ -1,8 +1,25 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Real-Time Scheduler</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="brand">
+            <span>🚀 ASYS</span>
+        </a>
+        <div class="nav-links">
+            <a href="/" class="active">Home</a>
+            <a href="/comparison" class="">Comparison</a>
+            <a href="/about" class="">About</a>
+        </div>
+    </nav>
 
-{% block title %}Home | Real-Time Scheduler{% endblock %}
-
-{% block content %}
+    <main class="container">
+        
 <h1 class="page-title">🚀 Real-Time Scheduling System</h1>
 
 <div class="status-indicator status-idle">
@@ -48,9 +65,11 @@
         <a href="#" onclick="runSim('pcp'); return false;" class="btn-glow btn-green">Execute PCP Mode</a>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
+    </main>
+
+    <script>
+        
 function runSim(protocol) {
     const delay = document.getElementById('delay').value;
     const low = document.getElementById('low').value;
@@ -64,4 +83,7 @@ function runSim(protocol) {
     
     window.location.href = `/results?protocol=${protocol}&delay=${delay}&low=${low}&medium=${medium}&high=${high}`;
 }
-{% endblock %}
+
+    </script>
+</body>
+</html>

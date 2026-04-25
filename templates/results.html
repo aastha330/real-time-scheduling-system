@@ -1,8 +1,25 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results | Real-Time Scheduler</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="brand">
+            <span>🚀 ASYS</span>
+        </a>
+        <div class="nav-links">
+            <a href="/" class="">Home</a>
+            <a href="/comparison" class="">Comparison</a>
+            <a href="/about" class="">About</a>
+        </div>
+    </nav>
 
-{% block title %}Results | Real-Time Scheduler{% endblock %}
-
-{% block content %}
+    <main class="container">
+        
 <h3>Simulation Results</h3>
 <h1 class="page-title">Simulation Diagnostics</h1>
 
@@ -23,12 +40,12 @@
         <p><strong>Execution Time:</strong> <span id="res-time" style="color: var(--warning-orange); font-family: 'Orbitron', sans-serif;">0.0s</span></p>
         <p style="margin-top: 1rem;"><strong>Analysis:</strong> <span id="res-explanation" style="color: var(--text-muted);">...</span></p>
         
-        {% if delay %}
+        
         <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 4px solid var(--accent-purple);">
             <p style="color: var(--accent-purple); font-family: 'Orbitron', sans-serif; margin-bottom: 0.5rem;">Input Parameters Configured:</p>
-            <p style="color: var(--text-light);">Delay = {{ delay }} sec, Low = {{ low }}, Medium = {{ medium }}, High = {{ high }}</p>
+            <p style="color: var(--text-light);">Delay = <span id="p-delay"></span> sec, Low = <span id="p-low"></span>, Medium = <span id="p-medium"></span>, High = <span id="p-high"></span></p>
         </div>
-        {% endif %}
+        
     </div>
 
     <div class="terminal-box" id="terminal">
@@ -42,10 +59,24 @@
 
 </div>
 
-{% endblock %}
 
-{% block scripts %}
-    const protocol = "{{ protocol }}";
+    </main>
+
+    <script>
+        
+    const urlParams = new URLSearchParams(window.location.search);
+    const protocol = urlParams.get('protocol') || 'no';
+    const delay = urlParams.get('delay') || '0';
+    const low = urlParams.get('low') || '0';
+    const medium = urlParams.get('medium') || '0';
+    const high = urlParams.get('high') || '0';
+    
+    document.getElementById('p-delay').innerText = delay;
+    document.getElementById('p-low').innerText = low;
+    document.getElementById('p-medium').innerText = medium;
+    document.getElementById('p-high').innerText = high;
+
+    
     const loader = document.getElementById('loader');
     const resultsDisplay = document.getElementById('results-display');
     const summaryPanel = document.getElementById('summary-panel');
@@ -124,4 +155,7 @@
         loader.style.display = 'none';
     };
 
-{% endblock %}
+
+    </script>
+</body>
+</html>
